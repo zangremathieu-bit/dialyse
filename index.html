@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B3C8C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Dialyse">
+<meta name="robots" content="noindex, nofollow">
+<title>Programme Dialyse</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%230B3C8C'/%3E%3Cpath d='M256 96c-60 84-110 150-110 214a110 110 0 0 0 220 0c0-64-50-130-110-214z' fill='%23fff'/%3E%3Crect x='226' y='250' width='60' height='130' rx='8' fill='%23D7192D'/%3E%3Crect x='191' y='285' width='130' height='60' rx='8' fill='%23D7192D'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%230B3C8C'/%3E%3Cpath d='M256 96c-60 84-110 150-110 214a110 110 0 0 0 220 0c0-64-50-130-110-214z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Semi+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bleu:#0B3C8C; --bleu-fonce:#082C68; --rouge:#D7192D; --ciel:#3AA7E0;
+  --fond:#EDF2F8; --surface:#FFFFFF; --surface-2:#F5F8FC;
+  --texte:#14243D; --doux:#5B6B84; --ligne:#D5DFEB;
+  --ok:#1C7C54; --ok-fond:#E3F3EB; --ko-fond:#FCE6E8; --att-fond:#FFF3DC; --att:#9A6200;
+  --ciel-fond:#E2F2FB;
+  color-scheme: light;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bleu:#0E3F92; --bleu-fonce:#0A2C66; --rouge:#F0475A; --ciel:#5BBBEE;
+    --fond:#0B1524; --surface:#13203A; --surface-2:#182844;
+    --texte:#E6EDF7; --doux:#97A7C0; --ligne:#26385A;
+    --ok:#5FD39E; --ok-fond:#123A2C; --ko-fond:#45161D; --att-fond:#3D2D0E; --att:#F2BE5C;
+    --ciel-fond:#12324A;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bleu:#0E3F92; --bleu-fonce:#0A2C66; --rouge:#F0475A; --ciel:#5BBBEE;
+  --fond:#0B1524; --surface:#13203A; --surface-2:#182844;
+  --texte:#E6EDF7; --doux:#97A7C0; --ligne:#26385A;
+  --ok:#5FD39E; --ok-fond:#123A2C; --ko-fond:#45161D; --att-fond:#3D2D0E; --att:#F2BE5C;
+  --ciel-fond:#12324A;
+  color-scheme: dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100%;background:var(--fond);color:var(--texte);
+  font-family:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;font-size:16px;line-height:1.45;
+  -webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bleu-fonce)}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--ciel);outline-offset:2px}
+
+/* En-tête */
+.entete{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bleu);color:#fff;
+  border-bottom:4px solid var(--rouge)}
+.entete-in{max-width:560px;margin:0 auto;padding:14px 18px 12px;display:flex;align-items:center;gap:12px}
+.logo{width:38px;height:38px;flex:none}
+.entete h1{margin:0;font-family:"Barlow Semi Condensed","Barlow",sans-serif;font-size:1.3rem;font-weight:700;letter-spacing:.01em;line-height:1.1}
+.entete p{margin:2px 0 0;font-size:.88rem;color:#CFE3F7}
+
+main{max-width:560px;margin:0 auto;padding:16px 14px 110px}
+.vue{display:none}.vue.active{display:block}
+
+/* Panneaux style G.O.P */
+.panneau{background:var(--surface);border:1px solid var(--ligne);border-radius:10px;margin-bottom:14px;overflow:hidden}
+.panneau-titre{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;
+  background:var(--surface-2);border-bottom:1px solid var(--ligne);border-left:4px solid var(--ciel)}
+.panneau-titre h2{margin:0;font-size:1rem;font-weight:700;color:var(--bleu)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .panneau-titre h2{color:var(--ciel)}}
+:root[data-theme="dark"] .panneau-titre h2{color:var(--ciel)}
+.panneau-corps{padding:14px}
+
+/* Ticket prochaine séance */
+.ticket{background:var(--bleu);color:#fff;border-radius:14px;margin-bottom:14px;position:relative;overflow:hidden}
+.ticket.veille{background:var(--rouge)}
+.ticket.encours{background:var(--ok)}
+.ticket-haut{padding:16px 18px 14px;display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:end}
+.ticket .etiq{font-size:.9rem;color:rgba(255,255,255,.82);grid-column:1/-1}
+.ticket .jour{font-family:"Barlow Semi Condensed","Barlow",sans-serif;font-size:1.9rem;font-weight:700;line-height:1.05}
+.ticket .date{font-size:.95rem;color:rgba(255,255,255,.85)}
+.ticket .heure{font-family:"Barlow Semi Condensed","Barlow",sans-serif;font-size:3.4rem;font-weight:700;line-height:.9;grid-row:2/4;grid-column:2;font-variant-numeric:tabular-nums}
+.ticket-bas{border-top:2px dashed rgba(255,255,255,.35);padding:11px 18px 13px;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:.95rem}
+.ticket-bas strong{font-weight:700}
+.ticket::before,.ticket::after{content:"";position:absolute;width:18px;height:18px;border-radius:50%;background:var(--fond);bottom:36px}
+.ticket::before{left:-9px}.ticket::after{right:-9px}
+
+/* Liste semaine */
+.ligne-seance{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--ligne);width:100%;background:none;border-left:0;border-right:0;border-top:0;text-align:left;cursor:pointer}
+.ligne-seance:last-child{border-bottom:0}
+.ligne-seance:active{background:var(--surface-2)}
+.pastille{width:46px;flex:none;text-align:center;border-radius:8px;padding:5px 0;background:var(--ciel-fond);color:var(--bleu)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .pastille{color:var(--ciel)}}
+:root[data-theme="dark"] .pastille{color:var(--ciel)}
+.pastille b{display:block;font-family:"Barlow Semi Condensed","Barlow",sans-serif;font-size:1.25rem;line-height:1}
+.pastille span{font-size:.72rem}
+.ls-texte{flex:1;min-width:0}
+.ls-texte .t1{font-weight:600}
+.ls-texte .t2{font-size:.85rem;color:var(--doux)}
+.statut{font-size:.8rem;font-weight:600;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.s-faite{background:var(--ok-fond);color:var(--ok)}
+.s-manquee{background:var(--ko-fond);color:var(--rouge)}
+.s-reportee{background:var(--att-fond);color:var(--att)}
+.s-avenir{background:var(--ciel-fond);color:var(--bleu)}
+.s-arenseigner{background:var(--ko-fond);color:var(--rouge)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .s-avenir{color:var(--ciel)}}
+:root[data-theme="dark"] .s-avenir{color:var(--ciel)}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{background:var(--surface-2);border:1px solid var(--ligne);border-radius:8px;padding:10px;text-align:center}
+.stat b{display:block;font-family:"Barlow Semi Condensed","Barlow",sans-serif;font-size:1.6rem;line-height:1.1}
+.stat span{font-size:.8rem;color:var(--doux)}
+.stat.ok b{color:var(--ok)}.stat.ko b{color:var(--rouge)}
+
+/* Boutons & champs */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:46px;padding:10px 16px;border-radius:9px;border:1px solid transparent;font-weight:600;cursor:pointer;width:100%}
+.btn-bleu{background:var(--bleu);color:#fff}
+.btn-rouge{background:var(--rouge);color:#fff}
+.btn-clair{background:var(--surface);border-color:var(--ligne);color:var(--texte)}
+.btn-lien{background:none;border:0;color:var(--rouge);width:auto;min-height:40px;padding:6px 4px}
+.btn svg{width:18px;height:18px;flex:none}
+.pile{display:grid;gap:10px}
+.deux{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label.champ{display:block;font-size:.88rem;color:var(--doux);font-weight:500}
+label.champ input,label.champ select,label.champ textarea{display:block;width:100%;margin-top:5px;min-height:46px;padding:10px 12px;border:1px solid var(--ligne);border-radius:8px;background:var(--surface);font-size:1rem}
+label.champ textarea{min-height:80px;resize:vertical}
+.aide{font-size:.85rem;color:var(--doux);margin:0}
+.info{font-size:.9rem;padding:10px 12px;border-radius:8px;background:var(--ciel-fond);margin:0 0 12px}
+.info.alerte{background:var(--ko-fond)}
+.etat-notif{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-weight:600}
+.point{width:11px;height:11px;border-radius:50%;background:var(--doux);flex:none}
+.point.on{background:var(--ok)}.point.off{background:var(--rouge)}
+
+.creneau{display:grid;grid-template-columns:1fr 110px 46px;gap:8px;align-items:center;margin-bottom:8px}
+.creneau select,.creneau input{min-height:46px;padding:8px 10px;border:1px solid var(--ligne);border-radius:8px;background:var(--surface);width:100%}
+.btn-suppr{width:46px;height:46px;border-radius:8px;border:1px solid var(--ligne);background:var(--surface);color:var(--rouge);cursor:pointer;display:grid;place-items:center}
+.btn-suppr svg{width:18px;height:18px}
+
+.bascule{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 0}
+.bascule input{width:48px;height:28px;appearance:none;-webkit-appearance:none;border-radius:999px;background:var(--ligne);position:relative;cursor:pointer;flex:none;transition:background .15s}
+.bascule input::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:transform .15s}
+.bascule input:checked{background:var(--ok)}
+.bascule input:checked::after{transform:translateX(20px)}
+
+.groupe-titre{font-size:.9rem;font-weight:700;color:var(--doux);margin:18px 4px 8px}
+.vide{padding:22px 14px;text-align:center;color:var(--doux)}
+
+/* Navigation basse */
+.nav{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--ligne);
+  padding-bottom:env(safe-area-inset-bottom,0px)}
+.nav-in{max-width:560px;margin:0 auto;display:grid;grid-template-columns:repeat(3,1fr)}
+.nav button{background:none;border:0;padding:9px 4px 10px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.78rem;font-weight:600;color:var(--doux);cursor:pointer;border-top:3px solid transparent}
+.nav button svg{width:23px;height:23px}
+.nav button[aria-current="page"]{color:var(--bleu);border-top-color:var(--rouge)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .nav button[aria-current="page"]{color:var(--ciel)}}
+:root[data-theme="dark"] .nav button[aria-current="page"]{color:var(--ciel)}
+
+/* Feuille modale */
+.voile{position:fixed;inset:0;z-index:40;background:rgba(5,15,35,.5);display:none;align-items:flex-end;justify-content:center}
+.voile.ouvert{display:flex}
+.feuille{background:var(--surface);width:100%;max-width:560px;max-height:92vh;overflow-y:auto;border-radius:16px 16px 0 0;
+  padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px));animation:monte .2s ease-out}
+@keyframes monte{from{transform:translateY(30px);opacity:.4}to{transform:none;opacity:1}}
+.feuille h3{margin:0 0 2px;font-size:1.2rem;color:var(--texte)}
+.feuille .sous{margin:0 0 14px;color:var(--doux);font-size:.92rem}
+.segment{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px}
+.segment button{min-height:46px;border-radius:8px;border:1px solid var(--ligne);background:var(--surface);font-weight:600;cursor:pointer}
+.segment button[aria-pressed="true"][data-v="faite"]{background:var(--ok);border-color:var(--ok);color:#fff}
+.segment button[aria-pressed="true"][data-v="manquee"]{background:var(--rouge);border-color:var(--rouge);color:#fff}
+.segment button[aria-pressed="true"][data-v="reportee"]{background:var(--att);border-color:var(--att);color:#fff}
+
+/* Bandeau alerte & toast */
+.bandeau{display:none;background:var(--rouge);color:#fff;border-radius:10px;padding:12px 14px;margin-bottom:14px;gap:10px;align-items:flex-start}
+.bandeau.visible{display:flex}
+.bandeau svg{width:22px;height:22px;flex:none;margin-top:1px}
+.bandeau b{display:block}
+.bandeau button{margin-left:auto;background:rgba(255,255,255,.2);border:0;color:#fff;border-radius:6px;padding:4px 10px;cursor:pointer;font-weight:600}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);z-index:50;
+  background:var(--texte);color:var(--fond);padding:10px 16px;border-radius:9px;font-weight:600;font-size:.92rem;opacity:0;pointer-events:none;transition:.2s;max-width:90vw;text-align:center}
+.toast.visible{opacity:1;transform:translateX(-50%) translateY(0)}
+
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="entete">
+  <div class="entete-in">
+    <svg class="logo" viewBox="0 0 512 512" aria-hidden="true"><rect width="512" height="512" rx="110" fill="#fff"/><path d="M256 86c-62 88-114 156-114 222a114 114 0 0 0 228 0c0-66-52-134-114-222z" fill="#0B3C8C"/><rect x="230" y="246" width="52" height="124" rx="8" fill="#D7192D"/><rect x="194" y="282" width="124" height="52" rx="8" fill="#D7192D"/></svg>
+    <div>
+      <h1>Programme Dialyse</h1>
+      <p id="sousTitre">Suivi des séances</p>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- ACCUEIL -->
+  <section class="vue active" id="vue-accueil" aria-label="Accueil">
+    <div class="bandeau" id="bandeau" role="alert">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+      <div><b id="bandeauTitre"></b><span id="bandeauTexte"></span></div>
+      <button type="button" id="bandeauFermer">OK</button>
+    </div>
+
+    <div class="ticket" id="ticket"></div>
+
+    <div class="panneau">
+      <div class="panneau-titre"><h2>Les 7 prochains jours</h2></div>
+      <div id="listeSemaine"></div>
+    </div>
+
+    <div class="panneau">
+      <div class="panneau-titre"><h2 id="titreMois">Ce mois-ci</h2></div>
+      <div class="panneau-corps"><div class="stats" id="stats"></div></div>
+    </div>
+
+    <div class="panneau">
+      <div class="panneau-titre"><h2>Rappels</h2></div>
+      <div class="panneau-corps" id="resumeRappel"></div>
+    </div>
+  </section>
+
+  <!-- JOURNAL -->
+  <section class="vue" id="vue-journal" aria-label="Journal des séances">
+    <p class="info">Touchez une séance pour noter si elle a eu lieu, le poids et la tension.</p>
+    <div id="journal"></div>
+  </section>
+
+  <!-- RÉGLAGES -->
+  <section class="vue" id="vue-reglages" aria-label="Réglages">
+    <div class="panneau">
+      <div class="panneau-titre"><h2>Patient et centre</h2></div>
+      <div class="panneau-corps pile">
+        <label class="champ">Nom du patient<input id="fPatient" type="text" autocomplete="off" placeholder="Ex. Papa"></label>
+        <label class="champ">Centre de dialyse<input id="fCentre" type="text" autocomplete="off" placeholder="Ex. CHU Yalgado – service néphrologie"></label>
+        <label class="champ">Durée d’une séance (heures)<input id="fDuree" type="number" min="1" max="8" step="0.5" inputmode="decimal"></label>
+      </div>
+    </div>
+
+    <div class="panneau">
+      <div class="panneau-titre"><h2>Horaires de la semaine</h2></div>
+      <div class="panneau-corps">
+        <div id="creneaux"></div>
+        <button class="btn btn-clair" type="button" id="ajoutCreneau">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>Ajouter un horaire
+        </button>
+      </div>
+    </div>
+
+    <div class="panneau">
+      <div class="panneau-titre"><h2>Rappels</h2></div>
+      <div class="panneau-corps pile">
+        <label class="champ">Rappel la veille à<input id="fVeille" type="time"></label>
+        <div class="bascule"><span>Rappel aussi le jour même</span><input id="fAvantOn" type="checkbox" aria-label="Rappel le jour même"></div>
+        <label class="champ">Combien d’heures avant la séance<input id="fAvantH" type="number" min="1" max="12" step="1" inputmode="numeric"></label>
+        <hr style="border:0;border-top:1px solid var(--ligne);width:100%;margin:4px 0">
+        <div class="etat-notif"><span class="point" id="pointNotif"></span><span id="texteNotif"></span></div>
+        <button class="btn btn-bleu" type="button" id="btnNotif">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>Activer les notifications
+        </button>
+        <button class="btn btn-rouge" type="button" id="btnIcs">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Ajouter au calendrier du téléphone
+        </button>
+        <p class="aide">Le calendrier du téléphone envoie les rappels même quand l’application est fermée. À refaire si vous changez les horaires (supprimez d’abord les anciens événements).</p>
+        <button class="btn btn-clair" type="button" id="btnTest">Tester un rappel</button>
+      </div>
+    </div>
+
+    <div class="panneau">
+      <div class="panneau-titre"><h2>Sauvegarde</h2></div>
+      <div class="panneau-corps pile">
+        <p class="aide">Les données restent uniquement sur ce téléphone. Exportez-les pour les garder ou les passer sur un autre appareil.</p>
+        <div class="deux">
+          <button class="btn btn-clair" type="button" id="btnExport">Exporter</button>
+          <button class="btn btn-clair" type="button" id="btnImport">Importer</button>
+        </div>
+        <input type="file" id="fichierImport" accept="application/json,.json" hidden>
+        <button class="btn btn-lien" type="button" id="btnReset">Tout effacer et repartir de zéro</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<nav class="nav" aria-label="Navigation">
+  <div class="nav-in">
+    <button type="button" data-vue="accueil" aria-current="page">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Accueil
+    </button>
+    <button type="button" data-vue="journal">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l2 2 4-4"/><rect x="4" y="3" width="16" height="18" rx="2"/></svg>Journal
+    </button>
+    <button type="button" data-vue="reglages">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Réglages
+    </button>
+  </div>
+</nav>
+
+<div class="voile" id="voile" role="dialog" aria-modal="true" aria-labelledby="fTitre">
+  <div class="feuille">
+    <h3 id="fTitre"></h3>
+    <p class="sous" id="fSous"></p>
+    <div class="segment" id="segment">
+      <button type="button" data-v="faite" aria-pressed="false">Faite</button>
+      <button type="button" data-v="manquee" aria-pressed="false">Manquée</button>
+      <button type="button" data-v="reportee" aria-pressed="false">Reportée</button>
+    </div>
+    <div class="pile">
+      <div class="deux">
+        <label class="champ">Poids avant (kg)<input id="sPoidsAv" type="number" step="0.1" inputmode="decimal"></label>
+        <label class="champ">Poids après (kg)<input id="sPoidsAp" type="number" step="0.1" inputmode="decimal"></label>
+      </div>
+      <label class="champ">Tension (ex. 13/8)<input id="sTension" type="text" autocomplete="off"></label>
+      <label class="champ">Observations<textarea id="sNote" placeholder="Fatigue, crampes, rendez-vous médecin…"></textarea></label>
+      <div class="deux">
+        <button class="btn btn-clair" type="button" id="sAnnuler">Fermer</button>
+        <button class="btn btn-bleu" type="button" id="sEnregistrer">Enregistrer</button>
+      </div>
+      <button class="btn btn-lien" type="button" id="sEffacer">Effacer cette fiche</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+'use strict';
+const JOURS=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+const JOURS_C=['Dim','Lun','Mar','Mer','Jeu','Ven','Sam'];
+const MOIS=['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+const ICS_J=['SU','MO','TU','WE','TH','FR','SA'];
+const CLE='programme-dialyse-v1';
+const STATUTS={faite:'Faite',manquee:'Manquée',reportee:'Reportée'};
+
+function defaut(){
+  return {
+    patient:'', centre:'', duree:4,
+    creneaux:[{id:uid(),jour:2,heure:'17:00'},{id:uid(),jour:5,heure:'17:00'},{id:uid(),jour:0,heure:'17:00'}],
+    rappel:{veille:'19:00', avantOn:true, avantH:2},
+    seances:{}, notifies:{}
+  };
+}
+function uid(){return Math.random().toString(36).slice(2,9)}
+function charger(){
+  try{const s=JSON.parse(localStorage.getItem(CLE)); if(s&&Array.isArray(s.creneaux)){const d=defaut();return Object.assign(d,s,{rappel:Object.assign(d.rappel,s.rappel||{})});}}catch(e){}
+  return defaut();
+}
+let S=charger();
+function sauver(){try{localStorage.setItem(CLE,JSON.stringify(S))}catch(e){toast('Enregistrement impossible sur cet appareil')}}
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const ymd=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const hm=t=>{const [h,m]=String(t||'0:0').split(':').map(Number);return {h:h||0,m:m||0}};
+const debutJour=d=>{const x=new Date(d);x.setHours(0,0,0,0);return x};
+const dureeMs=()=>Math.max(0.5,Number(S.duree)||4)*3600000;
+function heureTxt(t){const {h,m}=hm(t);return m?h+' h '+pad(m):h+' h'}
+function dateLongue(d){return JOURS[d.getDay()]+' '+d.getDate()+' '+MOIS[d.getMonth()]}
+
+/* Séances prévues entre deux dates */
+function occurrences(de,a){
+  const res=[]; const d=debutJour(de);
+  while(d<=a){
+    for(const c of S.creneaux){
+      if(Number(c.jour)!==d.getDay()) continue;
+      const {h,m}=hm(c.heure); const dt=new Date(d); dt.setHours(h,m,0,0);
+      if(dt>=de && dt<=a) res.push({debut:dt,heure:c.heure,cle:ymd(dt)+'_'+c.heure});
+    }
+    d.setDate(d.getDate()+1);
+  }
+  return res.sort((x,y)=>x.debut-y.debut);
+}
+function prochaine(){
+  const now=new Date();
+  const liste=occurrences(new Date(now-dureeMs()),new Date(+now+15*86400000));
+  return liste.find(o=>+o.debut+dureeMs()>now)||null;
+}
+function compteARebours(ms){
+  if(ms<=0) return 'maintenant';
+  const min=Math.floor(ms/60000), j=Math.floor(min/1440), h=Math.floor((min%1440)/60), mn=min%60;
+  if(j>0) return 'dans '+j+' j '+h+' h';
+  if(h>0) return 'dans '+h+' h '+pad(mn)+' min';
+  return 'dans '+mn+' min';
+}
+function statutDe(o){
+  const f=S.seances[o.cle];
+  if(f&&f.statut) return {cls:'s-'+f.statut,txt:STATUTS[f.statut]};
+  if(+o.debut+dureeMs()<Date.now()) return {cls:'s-arenseigner',txt:'À renseigner'};
+  return {cls:'s-avenir',txt:'Prévue'};
+}
+
+/* ---------- Rendu accueil ---------- */
+function rendreEntete(){
+  $('sousTitre').textContent=S.patient?'Suivi des séances de '+S.patient:'Suivi des séances';
+}
+function rendreTicket(){
+  const t=$('ticket'); const o=prochaine(); t.className='ticket';
+  if(!o){t.innerHTML='<div class="ticket-haut"><span class="etiq">Aucune séance prévue</span><span class="jour">Ajoutez les horaires</span></div><div class="ticket-bas"><span>Réglages → Horaires de la semaine</span></div>';return;}
+  const now=new Date(); const diff=o.debut-now;
+  const demain=debutJour(new Date(+now+86400000));
+  let etiq='Prochaine séance';
+  if(diff<=0){t.classList.add('encours');etiq='Séance en cours';}
+  else if(ymd(o.debut)===ymd(now)){t.classList.add('veille');etiq='Séance aujourd’hui';}
+  else if(ymd(o.debut)===ymd(demain)){t.classList.add('veille');etiq='Séance demain';}
+  const fin=new Date(+o.debut+dureeMs());
+  t.innerHTML='<div class="ticket-haut"><span class="etiq">'+etiq+'</span>'+
+    '<span class="jour">'+JOURS[o.debut.getDay()]+'</span>'+
+    '<span class="heure">'+heureTxt(o.heure).replace(' h ','h').replace(' h','h')+'</span>'+
+    '<span class="date">'+o.debut.getDate()+' '+MOIS[o.debut.getMonth()]+' · fin vers '+pad(fin.getHours())+'h'+pad(fin.getMinutes())+'</span></div>'+
+    '<div class="ticket-bas"><span><strong>'+(diff<=0?'En cours':compteARebours(diff))+'</strong></span><span>'+esc(S.centre||'Centre non renseigné')+'</span></div>';
+}
+function ligneSeance(o){
+  const st=statutDe(o);
+  return '<button type="button" class="ligne-seance" data-cle="'+o.cle+'">'+
+    '<span class="pastille"><b>'+o.debut.getDate()+'</b><span>'+JOURS_C[o.debut.getDay()]+'</span></span>'+
+    '<span class="ls-texte"><span class="t1">'+JOURS[o.debut.getDay()]+' à '+heureTxt(o.heure)+'</span><br><span class="t2">'+MOIS[o.debut.getMonth()]+' '+o.debut.getFullYear()+(S.seances[o.cle]&&S.seances[o.cle].note?' · note':'')+'</span></span>'+
+    '<span class="statut '+st.cls+'">'+st.txt+'</span></button>';
+}
+function rendreSemaine(){
+  const now=new Date();
+  const l=occurrences(debutJour(now),new Date(+debutJour(now)+7*86400000-1));
+  $('listeSemaine').innerHTML=l.length?l.map(ligneSeance).join(''):'<div class="vide">Aucune séance dans les 7 prochains jours.</div>';
+}
+function rendreStats(){
+  const now=new Date(); const debut=new Date(now.getFullYear(),now.getMonth(),1);
+  const fin=new Date(now.getFullYear(),now.getMonth()+1,0,23,59);
+  $('titreMois').textContent='Bilan de '+MOIS[now.getMonth()];
+  const l=occurrences(debut,fin);
+  let faites=0,manquees=0;
+  l.forEach(o=>{const f=S.seances[o.cle];if(f&&f.statut==='faite')faites++;if(f&&f.statut==='manquee')manquees++;});
+  $('stats').innerHTML='<div class="stat"><b>'+l.length+'</b><span>Prévues</span></div>'+
+    '<div class="stat ok"><b>'+faites+'</b><span>Faites</span></div>'+
+    '<div class="stat ko"><b>'+manquees+'</b><span>Manquées</span></div>';
+}
+function etatNotif(){
+  if(!('Notification' in window)) return {cls:'off',txt:'Notifications non disponibles sur ce navigateur'};
+  if(Notification.permission==='granted') return {cls:'on',txt:'Notifications activées'};
+  if(Notification.permission==='denied') return {cls:'off',txt:'Notifications bloquées dans le navigateur'};
+  return {cls:'',txt:'Notifications pas encore activées'};
+}
+function rendreRappel(){
+  const r=S.rappel; const e=etatNotif();
+  $('resumeRappel').innerHTML='<div class="etat-notif"><span class="point '+e.cls+'"></span><span>'+e.txt+'</span></div>'+
+    '<p class="aide" style="margin-bottom:12px">Rappel la veille à '+heureTxt(r.veille)+(r.avantOn?', puis '+r.avantH+' h avant la séance.':'.')+'</p>'+
+    '<button class="btn btn-rouge" type="button" id="btnIcs2"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Ajouter au calendrier du téléphone</button>';
+  $('btnIcs2').onclick=telechargerIcs;
+  $('pointNotif').className='point '+e.cls; $('texteNotif').textContent=e.txt;
+}
+function rendreAccueil(){rendreEntete();rendreTicket();rendreSemaine();rendreStats();rendreRappel();}
+
+/* ---------- Journal ---------- */
+function rendreJournal(){
+  const now=new Date();
+  const avenir=occurrences(now,new Date(+now+14*86400000)).filter(o=>!(+o.debut<=now));
+  const passees=occurrences(new Date(+now-90*86400000),now).reverse();
+  let h='';
+  h+='<div class="groupe-titre">À venir</div><div class="panneau">'+(avenir.length?avenir.map(ligneSeance).join(''):'<div class="vide">Aucune séance prévue.</div>')+'</div>';
+  if(passees.length){
+    let mois='';
+    passees.forEach((o,i)=>{
+      const m=MOIS[o.debut.getMonth()]+' '+o.debut.getFullYear();
+      if(m!==mois){ if(mois) h+='</div>'; mois=m; h+='<div class="groupe-titre">'+m.charAt(0).toUpperCase()+m.slice(1)+'</div><div class="panneau">'; }
+      h+=ligneSeance(o);
+    });
+    h+='</div>';
+  } else h+='<div class="groupe-titre">Passées</div><div class="panneau"><div class="vide">Les séances passées apparaîtront ici.</div></div>';
+  $('journal').innerHTML=h;
+}
+
+/* ---------- Réglages ---------- */
+function rendreReglages(){
+  $('fPatient').value=S.patient; $('fCentre').value=S.centre; $('fDuree').value=S.duree;
+  $('fVeille').value=S.rappel.veille; $('fAvantOn').checked=!!S.rappel.avantOn; $('fAvantH').value=S.rappel.avantH;
+  $('fAvantH').disabled=!S.rappel.avantOn;
+  const ordre=[...S.creneaux].sort((a,b)=>((a.jour+6)%7)-((b.jour+6)%7)||a.heure.localeCompare(b.heure));
+  $('creneaux').innerHTML=ordre.length?ordre.map(c=>
+    '<div class="creneau" data-id="'+c.id+'">'+
+    '<select aria-label="Jour">'+[1,2,3,4,5,6,0].map(j=>'<option value="'+j+'"'+(Number(c.jour)===j?' selected':'')+'>'+JOURS[j]+'</option>').join('')+'</select>'+
+    '<input type="time" aria-label="Heure" value="'+esc(c.heure)+'">'+
+    '<button type="button" class="btn-suppr" aria-label="Supprimer cet horaire"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button></div>'
+  ).join(''):'<p class="aide" style="margin-bottom:10px">Aucun horaire. Ajoutez les jours de dialyse.</p>';
+  rendreRappel();
+}
+function lierReglages(){
+  $('fPatient').addEventListener('input',e=>{S.patient=e.target.value.trim();sauver();rendreEntete();});
+  $('fCentre').addEventListener('input',e=>{S.centre=e.target.value.trim();sauver();});
+  $('fDuree').addEventListener('change',e=>{const v=Number(e.target.value);S.duree=v>0?v:4;sauver();});
+  $('fVeille').addEventListener('change',e=>{S.rappel.veille=e.target.value||'19:00';sauver();planifier();rendreRappel();});
+  $('fAvantOn').addEventListener('change',e=>{S.rappel.avantOn=e.target.checked;$('fAvantH').disabled=!e.target.checked;sauver();planifier();rendreRappel();});
+  $('fAvantH').addEventListener('change',e=>{const v=Math.round(Number(e.target.value));S.rappel.avantH=v>0?v:2;sauver();planifier();rendreRappel();});
+  $('creneaux').addEventListener('change',e=>{
+    const row=e.target.closest('.creneau'); if(!row) return;
+    const c=S.creneaux.find(x=>x.id===row.dataset.id); if(!c) return;
+    if(e.target.tagName==='SELECT') c.jour=Number(e.target.value); else c.heure=e.target.value||'17:00';
+    sauver(); planifier(); rendreReglages(); toast('Horaire modifié');
+  });
+  $('creneaux').addEventListener('click',e=>{
+    const b=e.target.closest('.btn-suppr'); if(!b) return;
+    const id=b.closest('.creneau').dataset.id;
+    if(!confirm('Supprimer cet horaire ?')) return;
+    S.creneaux=S.creneaux.filter(x=>x.id!==id); sauver(); planifier(); rendreReglages(); toast('Horaire supprimé');
+  });
+  $('ajoutCreneau').onclick=()=>{S.creneaux.push({id:uid(),jour:1,heure:'17:00'});sauver();planifier();rendreReglages();};
+}
+
+/* ---------- Fiche séance ---------- */
+let cleOuverte=null, statutChoisi=null;
+function ouvrirFiche(cle){
+  cleOuverte=cle; const [d,h]=cle.split('_'); const [y,m,j]=d.split('-').map(Number);
+  const dt=new Date(y,m-1,j);
+  const f=S.seances[cle]||{};
+  $('fTitre').textContent=dateLongue(dt);
+  $('fSous').textContent='Séance de '+heureTxt(h)+(S.centre?' · '+S.centre:'');
+  statutChoisi=f.statut||null; majSegment();
+  $('sPoidsAv').value=f.poidsAv||''; $('sPoidsAp').value=f.poidsAp||'';
+  $('sTension').value=f.tension||''; $('sNote').value=f.note||'';
+  $('voile').classList.add('ouvert');
+}
+function fermerFiche(){$('voile').classList.remove('ouvert');cleOuverte=null;}
+function majSegment(){document.querySelectorAll('#segment button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===statutChoisi)));}
+$('segment').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;statutChoisi=statutChoisi===b.dataset.v?null:b.dataset.v;majSegment();});
+$('sAnnuler').onclick=fermerFiche;
+$('voile').addEventListener('click',e=>{if(e.target===$('voile'))fermerFiche();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&cleOuverte)fermerFiche();});
+$('sEnregistrer').onclick=()=>{
+  const f={statut:statutChoisi,poidsAv:$('sPoidsAv').value,poidsAp:$('sPoidsAp').value,tension:$('sTension').value.trim(),note:$('sNote').value.trim()};
+  if(!f.statut&&!f.poidsAv&&!f.poidsAp&&!f.tension&&!f.note) delete S.seances[cleOuverte]; else S.seances[cleOuverte]=f;
+  sauver(); fermerFiche(); toutRendre(); toast('Séance enregistrée');
+};
+$('sEffacer').onclick=()=>{ if(!confirm('Effacer les informations de cette séance ?'))return; delete S.seances[cleOuverte]; sauver(); fermerFiche(); toutRendre(); toast('Fiche effacée'); };
+document.addEventListener('click',e=>{const l=e.target.closest('.ligne-seance');if(l)ouvrirFiche(l.dataset.cle);});
+
+/* ---------- Rappels ---------- */
+function rappelsAVenir(){
+  const now=new Date(); const res=[];
+  occurrences(now,new Date(+now+3*86400000)).forEach(o=>{
+    if(o.debut<=now) return;
+    const v=new Date(o.debut); v.setDate(v.getDate()-1); const {h,m}=hm(S.rappel.veille); v.setHours(h,m,0,0);
+    const lieu=S.centre?' – '+S.centre:'';
+    const qui=S.patient?S.patient+' : ':'';
+    if(v<o.debut) res.push({cle:'v_'+o.cle,quand:v,debut:o.debut,titre:'Dialyse demain',texte:qui+JOURS[o.debut.getDay()]+' à '+heureTxt(o.heure)+lieu});
+    if(S.rappel.avantOn){
+      const a=new Date(+o.debut-(Number(S.rappel.avantH)||2)*3600000);
+      res.push({cle:'a_'+o.cle,quand:a,debut:o.debut,titre:'Dialyse dans '+(S.rappel.avantH||2)+' h',texte:qui+'aujourd’hui à '+heureTxt(o.heure)+lieu});
+    }
+  });
+  return res;
+}
+let minuteur=null;
+function verifier(){
+  const now=new Date(); let change=false;
+  rappelsAVenir().forEach(r=>{
+    if(now>=r.quand && now<r.debut && !S.notifies[r.cle]){ S.notifies[r.cle]=Date.now(); change=true; notifier(r.titre,r.texte); }
+  });
+  const limite=Date.now()-10*86400000;
+  Object.keys(S.notifies).forEach(k=>{if(S.notifies[k]<limite){delete S.notifies[k];change=true;}});
+  if(change) sauver();
+  planifier();
+}
+function planifier(){
+  clearTimeout(minuteur);
+  const now=Date.now();
+  const futurs=rappelsAVenir().map(r=>+r.quand).filter(t=>t>now);
+  const prochain=futurs.length?Math.min(...futurs):now+3600000;
+  minuteur=setTimeout(verifier,Math.min(Math.max(prochain-now+500,1000),2147000000));
+}
+function notifier(titre,texte){
+  $('bandeauTitre').textContent=titre; $('bandeauTexte').textContent=texte; $('bandeau').classList.add('visible');
+  if(!('Notification' in window)||Notification.permission!=='granted') return;
+  const opts={body:texte,tag:'dialyse-'+titre,renotify:true,lang:'fr',requireInteraction:true};
+  const secours=()=>{try{new Notification(titre,opts)}catch(e){}};
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.getRegistration().then(reg=>{ if(reg&&reg.showNotification) reg.showNotification(titre,opts).catch(secours); else secours(); }).catch(secours);
+  } else secours();
+}
+$('bandeauFermer').onclick=()=>$('bandeau').classList.remove('visible');
+$('btnNotif').onclick=()=>{
+  if(!('Notification' in window)){toast('Ce navigateur ne gère pas les notifications. Utilisez le calendrier.');return;}
+  Notification.requestPermission().then(p=>{
+    rendreRappel();
+    if(p==='granted'){toast('Notifications activées');verifier();}
+    else toast('Autorisez les notifications dans les réglages du navigateur');
+  });
+};
+$('btnTest').onclick=()=>{
+  const o=prochaine();
+  notifier('Rappel de test',o?'Prochaine séance : '+dateLongue(o.debut)+' à '+heureTxt(o.heure):'Aucune séance prévue');
+  if(!('Notification' in window)||Notification.permission!=='granted') toast('Bandeau affiché. Activez les notifications pour les recevoir aussi hors de l’appli.');
+};
+
+/* ---------- Calendrier .ics ---------- */
+function telechargerIcs(){
+  if(!S.creneaux.length){toast('Ajoutez d’abord des horaires');return;}
+  const now=new Date();
+  const st=d=>d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'T'+pad(d.getHours())+pad(d.getMinutes())+'00';
+  const stUtc=d=>d.getUTCFullYear()+pad(d.getUTCMonth()+1)+pad(d.getUTCDate())+'T'+pad(d.getUTCHours())+pad(d.getUTCMinutes())+pad(d.getUTCSeconds())+'Z';
+  const echap=s=>String(s).replace(/\\/g,'\\\\').replace(/;/g,'\\;').replace(/,/g,'\\,').replace(/\n/g,'\\n');
+  const titre='Dialyse'+(S.patient?' – '+S.patient:'');
+  const L=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Programme Dialyse//FR','CALSCALE:GREGORIAN','METHOD:PUBLISH','X-WR-CALNAME:Programme Dialyse'];
+  S.creneaux.forEach(c=>{
+    const {h,m}=hm(c.heure); const d=debutJour(now);
+    while(d.getDay()!==Number(c.jour)) d.setDate(d.getDate()+1);
+    d.setHours(h,m,0,0);
+    const fin=new Date(+d+dureeMs());
+    const v=hm(S.rappel.veille);
+    const minVeille=1440-(v.h*60+v.m)+(h*60+m);
+    L.push('BEGIN:VEVENT','UID:dialyse-'+c.id+'-'+ICS_J[c.jour]+pad(h)+pad(m)+'@programme-dialyse','DTSTAMP:'+stUtc(now),
+      'DTSTART:'+st(d),'DTEND:'+st(fin),'RRULE:FREQ=WEEKLY;BYDAY='+ICS_J[c.jour],
+      'SUMMARY:'+echap(titre));
+    if(S.centre) L.push('LOCATION:'+echap(S.centre));
+    L.push('DESCRIPTION:'+echap('Séance de dialyse – '+JOURS[c.jour]+' à '+heureTxt(c.heure)));
+    if(minVeille>0) L.push('BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+echap('Dialyse demain à '+heureTxt(c.heure)),'TRIGGER:-PT'+minVeille+'M','END:VALARM');
+    if(S.rappel.avantOn) L.push('BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+echap('Dialyse dans '+S.rappel.avantH+' h'),'TRIGGER:-PT'+(Number(S.rappel.avantH)*60)+'M','END:VALARM');
+    L.push('END:VEVENT');
+  });
+  L.push('END:VCALENDAR');
+  const blob=new Blob([L.join('\r\n')],{type:'text/calendar;charset=utf-8'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='programme-dialyse.ics';
+  document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},2000);
+  toast('Ouvrez le fichier pour l’ajouter au calendrier');
+}
+$('btnIcs').onclick=telechargerIcs;
+
+/* ---------- Sauvegarde ---------- */
+$('btnExport').onclick=()=>{
+  const blob=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='programme-dialyse-'+ymd(new Date())+'.json';
+  document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},2000);
+  toast('Sauvegarde exportée');
+};
+$('btnImport').onclick=()=>$('fichierImport').click();
+$('fichierImport').onchange=e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader();
+  r.onload=()=>{try{const d=JSON.parse(r.result); if(!d||!Array.isArray(d.creneaux)) throw 0;
+    if(!confirm('Remplacer les données actuelles par cette sauvegarde ?')) return;
+    const base=defaut(); S=Object.assign(base,d,{rappel:Object.assign(base.rappel,d.rappel||{})}); sauver(); toutRendre(); planifier(); toast('Sauvegarde importée');
+  }catch(err){toast('Fichier invalide : choisissez une sauvegarde Programme Dialyse (.json)');} e.target.value='';};
+  r.readAsText(f);
+};
+$('btnReset').onclick=()=>{ if(!confirm('Effacer toutes les données (horaires, journal, réglages) ?'))return; S=defaut(); sauver(); toutRendre(); planifier(); toast('Données effacées'); };
+
+/* ---------- Navigation & divers ---------- */
+let tToast=null;
+function toast(t){const el=$('toast');el.textContent=t;el.classList.add('visible');clearTimeout(tToast);tToast=setTimeout(()=>el.classList.remove('visible'),2800);}
+function afficherVue(v){
+  document.querySelectorAll('.vue').forEach(s=>s.classList.toggle('active',s.id==='vue-'+v));
+  document.querySelectorAll('.nav button').forEach(b=>{if(b.dataset.vue===v)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');});
+  if(v==='accueil') rendreAccueil(); if(v==='journal') rendreJournal(); if(v==='reglages') rendreReglages();
+  window.scrollTo(0,0);
+  if(location.hash!=='#'+v) history.replaceState(null,'','#'+v);
+}
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>afficherVue(b.dataset.vue));
+function toutRendre(){rendreAccueil();if($('vue-journal').classList.contains('active'))rendreJournal();if($('vue-reglages').classList.contains('active'))rendreReglages();}
+
+lierReglages();
+const vueInit=['accueil','journal','reglages'].includes(location.hash.slice(1))?location.hash.slice(1):'accueil';
+afficherVue(vueInit);
+verifier();
+setInterval(()=>{if(document.visibilityState==='visible'){rendreTicket();}},30000);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){toutRendre();verifier();}});
+if('serviceWorker' in navigator && location.protocol==='https:') navigator.serviceWorker.register('sw.js').catch(()=>{});
+})();
+</script>
+</body>
+</html>

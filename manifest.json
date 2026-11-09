@@ -1,0 +1,18 @@
+{
+  "name": "Programme Dialyse",
+  "short_name": "Dialyse",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0B3C8C",
+  "theme_color": "#0B3C8C",
+  "lang": "fr",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='96' fill='%230B3C8C'/%3E%3Cpath d='M256 96c-60 84-110 150-110 214a110 110 0 0 0 220 0c0-64-50-130-110-214z' fill='%23fff'/%3E%3Crect x='226' y='250' width='60' height='130' rx='8' fill='%23D7192D'/%3E%3Crect x='191' y='285' width='130' height='60' rx='8' fill='%23D7192D'/%3E%3C/svg%3E",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
